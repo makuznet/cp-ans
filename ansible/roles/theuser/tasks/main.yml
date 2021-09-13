@@ -1,0 +1,19 @@
+---
+- name: create the user
+  user:
+    name: theuser
+    state: present
+    create_home: true
+    shell: /bin/bash
+
+- name: allow the user to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    line: "theuser ALL=(ALL) NOPASSWD: ALL"
+    validate: /usr/sbin/visudo -cf %s
+
+- name: set up authorized keys for the user
+  authorized_key:
+    user: theuser
+    state: present
+    key: "{{ lookup('file', 'files/id_rsa.pub') }}"

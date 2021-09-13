@@ -1,0 +1,64 @@
+---
+- name: copy ssh private key to the user .ssh dir
+  copy:
+    src: files/id_rsa
+    dest: /home/theuser/.ssh/id_rsa
+    owner: theuser
+    mode: 0600
+
+- name: install apps
+  yum:
+    update_cache: true
+    name: "{{ item }}"
+    state: present
+  loop:
+    - git
+    - python3
+    - python3-pip
+
+- name: stat cp-ansible dir
+  stat:
+    path: /home/theuser/cp-ansible
+  register: cp  
+
+- name: clone cp-ansible
+  ansible.builtin.command: |
+    git clone --branch 6.2.0-post https://github.com/confluentinc/cp-ansible 
+  args:
+    chdir: /home/theuser
+  when: cp.stat.isdir is not defined      
+
+- name: copying template files
+  template:
+    src: "{{ item.src_file }}"
+    dest: "{{ item.dest_file }}"
+    mode: 0644
+  loop:
+    - {
+      src_file: "hosts.yml.j2",
+      dest_file: "/home/theuser/cp-ansible/hosts.yml",
+    }
+  tags:
+    - inventory  
+
+- name: installing ansible
+  pip:
+    name: "ansible"
+    umask: "0022"
+  become: True  
+
+# - name: .ansible/tmp
+#   file:
+#     path: /home/theuser/.ansible/tmp
+#     state: directory
+#     mode: '0755'
+  
+# - name: install the cluster
+#   ansible.builtin.command: |
+#     ansible-playbook -i hosts.yml all.yml
+#   become: true
+#   become_user: theuser  
+#   args:
+#     chdir: /home/theuser/cp-ansible
+#   tags:
+#     - cluster  

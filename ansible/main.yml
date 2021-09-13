@@ -1,0 +1,16 @@
+---
+- name: add the user
+  hosts: ya
+  become: true
+  gather_facts: false
+  roles:
+    - role: theuser
+      tags: theuser  
+
+- name: configure ansible host
+  hosts: ya[0]
+  become: true
+  gather_facts: false
+  roles:
+    - role: ans
+      tags: ans       

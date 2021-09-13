@@ -1,0 +1,9 @@
+---
+all:
+  hosts:
+  children:
+  %{for num in drop_num~}
+  ${drop_group[num]}:
+      hosts:
+        ${drop_dns[num]}:
+  %{endfor~}

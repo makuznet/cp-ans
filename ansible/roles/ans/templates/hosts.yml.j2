@@ -1,0 +1,39 @@
+all:
+  vars:
+    ansible_connection: ssh
+    ansible_user: theuser
+    ansible_become: true
+    ansible_ssh_private_key_file: ~/.ssh/id_rsa
+    ansible_ssh_common_args: -o StrictHostKeyChecking=no
+
+    confluent_server_enabled: false
+
+zookeeper:
+  hosts:
+    one.makuznet:
+    two.makuznet:
+    three.makuznet:
+
+kafka_broker:
+  hosts:
+    one.makuznet:
+    two.makuznet:
+    three.makuznet:
+
+schema_registry:
+  hosts:
+    one.makuznet:
+    two.makuznet:
+    three.makuznet:
+
+ksql:
+  hosts:
+    one.makuznet:
+    two.makuznet:
+    three.makuznet:
+
+kafka_connect:
+  hosts:
+    one.makuznet:
+    two.makuznet:
+    three.makuznet:
